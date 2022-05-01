@@ -1,2 +1,5 @@
-# Akkadian
-Akkadian is a discord.py 2.0 bot created with functionality and gaming in mind, to bring a better user experience to a variety of aspects within the industry.
+# Deprecated
+
+This version is no longer maintained; you may still use it, but be aware that I will provide no support if an issue arises as I am no longer developing this version. 
+
+###### **Use it at your own risk.**
