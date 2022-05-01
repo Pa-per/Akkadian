@@ -33,7 +33,6 @@ class PriceCheck(commands.Cog):
                 await message.edit(content="", embed=embed)
         except Exception as e:
             print(e)
-        
-        
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(PriceCheck(bot))
