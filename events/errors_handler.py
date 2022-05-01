@@ -15,7 +15,9 @@ class commandErrors(commands.Cog):
             await ctx.reply(f"You are on cooldown. Please wait {error.retry_after:.2f} seconds and try again.", mention_author=False)
         elif isinstance(error, commands.CheckFailure):
             await ctx.reply(f"You are not allowed to use this command.", mention_author=False)
-
+        elif isinstance(error, commands.MissingRequiredArgument):
+            arg_missing = error.param.name
+            await ctx.reply(f"You are missing the `{arg_missing}` argument. Please try again.", mention_author=False)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(commandErrors(bot))

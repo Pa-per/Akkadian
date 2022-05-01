@@ -22,15 +22,12 @@ class minecraft_account(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions()
     @commands.cooldown(1, 10, commands.BucketType.member)
-    async def skin(self, ctx: commands.Context, name: str = None):
+    async def skin(self, ctx: commands.Context, name: str):
         """Command that retrieves the users minecraft account skin
         Args:
             name (str, optional): A Mojang/Microsoft account username. Defaults to None.
         """
         await ctx.trigger_typing()
-        if name is None:
-            await ctx.reply(embed=no_username_given, mention_author=False)
-            return ctx.command.reset_cooldown(ctx)
         searching.description = f"<a:loading:969275060928004207> **Searching for...** [`{name}`]"
         msg = await ctx.reply(embed=searching, mention_author=False)
         session = aiohttp.ClientSession()
@@ -55,16 +52,13 @@ class minecraft_account(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions()
     @commands.cooldown(1, 10, commands.BucketType.member)
-    async def names(self, ctx: commands.Context, name: str = None):
+    async def names(self, ctx: commands.Context, name: str):
         """Command that retrieves a users previous usernames if any.
 
         Args:
             name (str, optional): The Mojang/Microsoft username to search. Defaults to None.
         """
         await ctx.trigger_typing()
-        if name is None:
-            await ctx.reply(embed=no_username_given, mention_author=False)
-            return ctx.command.reset_cooldown(ctx)
         searching.description = f"<a:loading:969275060928004207> **Searching for...** [`{name}`]"
         msg = await ctx.reply(embed=searching, mention_author=False)
         session = aiohttp.ClientSession()
@@ -117,15 +111,12 @@ class minecraft_account(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions()
     @commands.cooldown(1, 10, commands.BucketType.member)
-    async def uuid(self, ctx: commands.Context, name: str = None):
+    async def uuid(self, ctx: commands.Context, name: str):
         """Command that retrieves a users UUID.
         Args:
             name (str, optional): The Mojang/Microsoft username to search. Defaults to None.
         """
         await ctx.trigger_typing()
-        if name is None:
-            await ctx.reply(embed=no_username_given, mention_author=False)
-            return ctx.command.reset_cooldown(ctx)
         searching.description = f"<a:loading:969275060928004207> **Searching for...** [`{name}`]"
         msg = await ctx.reply(embed=searching, mention_author=False)
         session = aiohttp.ClientSession()
