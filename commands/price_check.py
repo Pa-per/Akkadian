@@ -6,7 +6,7 @@ from utils.functions import get_price
 class PriceCheck(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.client = bot
-        
+
     @commands.command(name='price',
                       aliases=['pricecheck'],
                       description='Check the price of a product on Amazon (only tested on Amazon.co.uk atm.)',
@@ -25,7 +25,8 @@ class PriceCheck(commands.Cog):
                 await response.delete()
                 await message.edit(content="Checking...")
                 price_text, product_name = get_price(response.content)
-                price = price_text[1:]
+                # use this later for price comparison
+                # price = price_text[1:]
                 embed = discord.Embed(title=f"Amazon Price Check", description=f"{product_name}", color=0x00ff00)
                 embed.add_field(name="Price", value=f"{price_text}", inline=False)
                 embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar.url)

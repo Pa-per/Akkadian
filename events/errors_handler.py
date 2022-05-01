@@ -1,7 +1,4 @@
-import discord
 from discord.ext import commands
-import colorama
-from colorama import Fore
 
 
 class commandErrors(commands.Cog):
