@@ -1,8 +1,6 @@
 import datetime
 import discord
 from discord.ext import commands
-import colorama
-from colorama import Fore
 
 
 class Moderation(commands.Cog):
@@ -69,40 +67,6 @@ class Moderation(commands.Cog):
         await ctx.channel.purge(limit=amount)
         msg = await ctx.send(f"Cleared **{amount}** messages.")
         await msg.delete(delay=5)
-    
-    @commands.command(name="mute",
-                      usage="<user> <time>",
-                      description="Mutes a user for a certain amount of time."
-                      )
-    @commands.guild_only()
-    @commands.has_permissions(manage_roles=True)
-    @commands.cooldown(1, 10, commands.BucketType.member)
-    async def mute(self, ctx:commands.Context, user:discord.User, time:int = None, format: str = None, reason:str = None):
-        '''format is only seconds minutes hours and days'''
-        if time is None:
-            time = 5
-        if format is None:
-            format = "m"
-        if format == "s":
-            time = time
-        if reason is None:
-            reason = "No reason provided."
-        elif format == "m":
-            time = time * 60
-        elif format == "h":
-            time = time * 3600
-        elif format == "d":
-            time = time * 86400
-        time = datetime.timedelta(seconds=time)
-        now = datetime.datetime.utcnow()
-        then = now + time
-        time_until = then - now
-        try:
-            '''add seconds onto a time delta'''
-            await user.timeout_for(until=time_until, reason=reason)
-            await ctx.reply(f"{user.mention} has been muted", mention_author=False)
-        except Exception as e:
-            await ctx.reply(f"Something went wrong {e}")
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Moderation(bot))
