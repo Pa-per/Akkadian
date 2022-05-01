@@ -11,6 +11,16 @@ found_embed = discord.Embed(title="Skin Search | ✅",
 not_found = discord.Embed(title="", color=discord.Color.red())
 searching = discord.Embed(title="", color=discord.Color.from_rgb(0, 255, 154))
 
+async def check_exists(name):
+    session = aiohttp.ClientSession()
+    async with session.get(f"https://api.mojang.com/users/profiles/minecraft/{name}") as response:
+        if response.status == 200:
+            data = await response.json()
+            await session.close()
+            return data
+        else:
+            await session.close()
+            return False
 
 class minecraft_account(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -30,20 +40,17 @@ class minecraft_account(commands.Cog):
         await ctx.trigger_typing()
         searching.description = f"<a:loading:969275060928004207> **Searching for...** [`{name}`]"
         msg = await ctx.reply(embed=searching, mention_author=False)
-        session = aiohttp.ClientSession()
-        async with session.get(f"https://api.mojang.com/users/profiles/minecraft/{name}") as response:
-            if response.status != 200:
-                not_found.description = f"There are no players matching [`{name}`] according to Mojang!"
-                return await msg.edit(embed=not_found)
-            else:
-                data = await response.json()
-                UUID = data["id"]
-                Name = data["name"]
-                image = f"https://crafthead.net/armor/body/{UUID}"
-                found_embed.description = f"[`{Name}`]"
-                found_embed.set_image(url=image)
-                await msg.edit(embed=found_embed)
-            await session.close()
+        data = await check_exists(name)
+        if data is False:
+            not_found.description = f"There are no players matching [`{name}`] according to Mojang!"
+            return await msg.edit(embed=not_found)
+        else:
+            UUID = data["id"]
+            Name = data["name"]
+            image = f"https://crafthead.net/armor/body/{UUID}"
+            found_embed.description = f"[`{Name}`]"
+            found_embed.set_image(url=image)
+            await msg.edit(embed=found_embed)
 
     @commands.command(name="names",
                       usage="<account name>",
@@ -61,49 +68,46 @@ class minecraft_account(commands.Cog):
         await ctx.trigger_typing()
         searching.description = f"<a:loading:969275060928004207> **Searching for...** [`{name}`]"
         msg = await ctx.reply(embed=searching, mention_author=False)
-        session = aiohttp.ClientSession()
-        async with session.get(f"https://api.mojang.com/users/profiles/minecraft/{name}") as resp:
-            if resp.status != 200:
-                not_found.description = f"There are no players matching [`{name}`] according to Mojang!"
-                return await msg.edit(embed=not_found)
-            else:
-                data = await resp.json()
-                await session.close()
-                UUID = data["id"]
-                session = aiohttp.ClientSession()
-                async with session.get(f"https://api.mojang.com/user/profiles/{UUID}/names") as response:
-                    if response.status != 200:
-                        await session.close()
-                        await msg.edit(embed=something_went_wrong)
+        data = await check_exists(name)
+        if data is False:
+            not_found.description = f"There are no players matching [`{name}`] according to Mojang!"
+            return await msg.edit(embed=not_found)
+        else:
+            UUID = data["id"]
+            session = aiohttp.ClientSession()
+            async with session.get(f"https://api.mojang.com/user/profiles/{UUID}/names") as response:
+                if response.status != 200:
+                    await session.close()
+                    await msg.edit(embed=something_went_wrong)
+                else:
+                    data = await response.json()
+                    await session.close()
+                    found_names = len(data) - 1
+                    current_name = data.pop()
+                    found_names_embed = discord.Embed(
+                        title="Name Search | ✅", description=f"Found a total of {found_names} previous name(s)", color=discord.Color.from_rgb(0, 255, 154))
+                    found_names_embed.set_thumbnail(
+                        url=f"https://minotar.net/armor/bust/{name}/190.png")
+                    if "changedToAt" in current_name:
+                        timestamp = current_name["changedToAt"] / 1000
+                        found_names_embed.add_field(
+                            name="Current Name", value=f"`{current_name['name']}` - <t:{int(timestamp)}:R>", inline=False)
                     else:
-                        data = await response.json()
-                        await session.close()
-                        found_names = len(data) - 1
-                        current_name = data.pop()
-                        found_names_embed = discord.Embed(
-                            title="Name Search | ✅", description=f"Found a total of {found_names} previous name(s)", color=discord.Color.from_rgb(0, 255, 154))
-                        found_names_embed.set_thumbnail(
-                            url=f"https://minotar.net/armor/bust/{name}/190.png")
-                        if "changedToAt" in current_name:
-                            timestamp = current_name["changedToAt"] / 1000
-                            found_names_embed.add_field(
-                                name="Current Name", value=f"`{current_name['name']}` - <t:{int(timestamp)}:R>", inline=False)
-                        else:
-                            found_names_embed.add_field(
-                                name="Current Name", value=f"`{current_name['name']}` - Original", inline=False)
-                        if found_names != 0:
-                            names = ""
-                            for name in data:
-                                if "changedToAt" in name:
-                                    timestamp = name["changedToAt"] / 1000
-                                    name = name['name']
-                                    names += f"`{name}` - <t:{int(timestamp)}:R>\n"
-                                else:
-                                    original_name = name['name']
-                                    names += f"`{original_name}` - Original\n"
-                            found_names_embed.add_field(
-                                name="Names Found", value=names)
-                        await msg.edit(embed=found_names_embed)
+                        found_names_embed.add_field(
+                            name="Current Name", value=f"`{current_name['name']}` - Original", inline=False)
+                    if found_names != 0:
+                        names = ""
+                        for name in data:
+                            if "changedToAt" in name:
+                                timestamp = name["changedToAt"] / 1000
+                                name = name['name']
+                                names += f"`{name}` - <t:{int(timestamp)}:R>\n"
+                            else:
+                                original_name = name['name']
+                                names += f"`{original_name}` - Original\n"
+                        found_names_embed.add_field(
+                            name="Names Found", value=names)
+                    await msg.edit(embed=found_names_embed)
 
     @commands.command(name="uuid",
                       usage="<account name>",
@@ -119,25 +123,20 @@ class minecraft_account(commands.Cog):
         await ctx.trigger_typing()
         searching.description = f"<a:loading:969275060928004207> **Searching for...** [`{name}`]"
         msg = await ctx.reply(embed=searching, mention_author=False)
-        session = aiohttp.ClientSession()
-        async with session.get(f"https://api.mojang.com/users/profiles/minecraft/{name}") as resp:
-            if resp.status != 200:
-                not_found.description = f"There are no players matching [`{name}`] according to Mojang!"
-                await session.close()
-                return await msg.edit(embed=not_found)
-            else:
-                data = await resp.json()
-                await session.close()
-                UUID = data["id"]
-                found_embed = discord.Embed(title="UUID Search | ✅",
-                                            color=discord.Color.from_rgb(0, 255, 154))
-                found_embed.description = f"[`{name}`]"
-                found_embed.set_thumbnail(
-                    url=f"https://minotar.net/armor/bust/{name}/190.png")
-                found_embed.add_field(
-                    name="UUID", value=f"`{UUID}`", inline=False)
-                await msg.edit(embed=found_embed)
-
+        data = await check_exists(name)
+        if data is False:
+            not_found.description = f"There are no players matching [`{name}`] according to Mojang!"
+            return await msg.edit(embed=not_found)
+        else:
+            UUID = data["id"]
+            found_embed = discord.Embed(title="UUID Search | ✅",
+                                        color=discord.Color.from_rgb(0, 255, 154))
+            found_embed.description = f"[`{name}`]"
+            found_embed.set_thumbnail(
+                url=f"https://minotar.net/armor/bust/{name}/190.png")
+            found_embed.add_field(
+                name="UUID", value=f"`{UUID}`", inline=False)
+            await msg.edit(embed=found_embed)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(minecraft_account(bot))
