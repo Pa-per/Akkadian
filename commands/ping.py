@@ -10,7 +10,7 @@ latency_measurements = {"10": "is amazing", "50": "is average",
                         "100": "could be better", "150": "has an issue"}
 
 
-class ping(commands.Cog):
+class server_ping(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.client = bot
 
@@ -30,7 +30,7 @@ class ping(commands.Cog):
             # * Retrieve the clients latency and return the value rounded up and multiplied to one thousand.
             current_latency = round(self.client.latency * 1000)
             # * Loop through the dictionary we made with key values that represent ping "levels".
-            for latency in latency_measurements.keys():
+            for latency in latency_measurements:
                 # * If the current ping is greater than the ping "level" we return that keys message.
                 if current_latency >= int(latency):
                     message = latency_measurements[latency]
@@ -43,16 +43,16 @@ class ping(commands.Cog):
             main_server = await session.get("https://api.mcsrvstat.us/2/mc.akkadian.gg")
             status = await main_server.json()
             await session.close()
-            try:
-                serverURL = JavaServer.lookup("mc.akkadian.gg")
-                iconURL = serverURL.status().favicon
+            serverURL = JavaServer.lookup("mc.akkadian.gg")
+            iconURL = serverURL.status().favicon
+            if iconURL is not None:
                 IconBinary = iconURL.split("base64,")[1]
                 base64_img_bytes = IconBinary.encode('utf-8')
                 with open('decoded_image.png', 'wb') as file_to_save:
                     decoded_image_data = base64.decodebytes(base64_img_bytes)
                     file_to_save.write(decoded_image_data)
                     status_ = True
-            except:
+            else:
                 status_ = False
             online = status["online"]
             if online == True:
@@ -76,4 +76,4 @@ class ping(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(ping(bot))
+    await bot.add_cog(server_ping(bot))
