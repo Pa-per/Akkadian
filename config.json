@@ -1,0 +1,8 @@
+{
+    "bot": {
+        "version": "1.0.0",
+        "creator": "Paper",
+        "token": "your_discord_bot_token",
+        "owner": "your_discord_id"
+    } 
+}
