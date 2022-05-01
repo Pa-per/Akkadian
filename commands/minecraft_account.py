@@ -8,8 +8,8 @@ something_went_wrong = discord.Embed(
     title="404 | ❌", description="Sorry, something has gone wrong with the API, please try again later.", color=discord.Color.red())
 found_embed = discord.Embed(title="Skin Search | ✅",
                             color=discord.Color.from_rgb(0, 255, 154))
-not_found = discord.Embed(title="", color=discord.Color.red())
-searching = discord.Embed(title="", color=discord.Color.from_rgb(0, 255, 154))
+not_found = discord.Embed(title="", description="Sorry that username does not exist according to Mojang!", color=discord.Color.red())
+searching = discord.Embed(title="", description="Searching please wait...", color=discord.Color.from_rgb(0, 255, 154))
 
 async def check_exists(name):
     session = aiohttp.ClientSession()
@@ -38,11 +38,9 @@ class minecraft_account(commands.Cog):
             name (str, optional): A Mojang/Microsoft account username. Defaults to None.
         """
         await ctx.trigger_typing()
-        searching.description = f"<a:loading:969275060928004207> **Searching for...** [`{name}`]"
         msg = await ctx.reply(embed=searching, mention_author=False)
         data = await check_exists(name)
         if data is False:
-            not_found.description = f"There are no players matching [`{name}`] according to Mojang!"
             return await msg.edit(embed=not_found)
         else:
             UUID = data["id"]
@@ -66,11 +64,9 @@ class minecraft_account(commands.Cog):
             name (str, optional): The Mojang/Microsoft username to search. Defaults to None.
         """
         await ctx.trigger_typing()
-        searching.description = f"<a:loading:969275060928004207> **Searching for...** [`{name}`]"
         msg = await ctx.reply(embed=searching, mention_author=False)
         data = await check_exists(name)
         if data is False:
-            not_found.description = f"There are no players matching [`{name}`] according to Mojang!"
             return await msg.edit(embed=not_found)
         else:
             UUID = data["id"]
@@ -121,11 +117,9 @@ class minecraft_account(commands.Cog):
             name (str, optional): The Mojang/Microsoft username to search. Defaults to None.
         """
         await ctx.trigger_typing()
-        searching.description = f"<a:loading:969275060928004207> **Searching for...** [`{name}`]"
         msg = await ctx.reply(embed=searching, mention_author=False)
         data = await check_exists(name)
         if data is False:
-            not_found.description = f"There are no players matching [`{name}`] according to Mojang!"
             return await msg.edit(embed=not_found)
         else:
             UUID = data["id"]
