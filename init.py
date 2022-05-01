@@ -5,6 +5,7 @@ import platform
 import discord
 from colorama import Fore
 from discord.ext import commands
+from discord.ext.commands import ExtensionError
 
 intents = discord.Intents.all()
 
@@ -75,21 +76,21 @@ async def on_ready():
 
 @client.command()
 async def reload(ctx):
-        if ctx.author.id == int(owner):
-            for filename in os.listdir("commands") and os.listdir("events"):
-                if filename.endswith(".py"):
-                    try:
-                        await client.unload_extension(f"commands.{filename[:-3]}")
-                    except:
-                        await client.unload_extension(f"events.{filename[:-3]}")
-            for filename in os.listdir("commands") and os.listdir("events"):
-                if filename.endswith(".py"):
-                    try:
-                        await client.load_extension(f"commands.{filename[:-3]}")
-                    except:
-                        await client.load_extension(f"events.{filename[:-3]}")
-            await ctx.send("Reloaded all cogs")
-        else:
-            return
+    if ctx.author.id == int(owner):
+        for filename in os.listdir("commands") and os.listdir("events"):
+            if filename.endswith(".py"):
+                try:
+                    await client.unload_extension(f"commands.{filename[:-3]}")
+                except ExtensionError:
+                    await client.unload_extension(f"events.{filename[:-3]}")
+        for filename in os.listdir("commands") and os.listdir("events"):
+            if filename.endswith(".py"):
+                try:
+                    await client.load_extension(f"commands.{filename[:-3]}")
+                except ExtensionError:
+                    await client.load_extension(f"events.{filename[:-3]}")
+        await ctx.send("Reloaded all cogs")
+    else:
+        return
 
 client.run(token)
