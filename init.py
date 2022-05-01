@@ -73,24 +73,23 @@ async def on_ready():
             await client.change_presence(status=discord.Status.idle, activity=discord.Activity(type=discord.ActivityType.playing, name=game))
 
 
-# reload all cogs if the bot owner runs the command
 @client.command()
 async def reload(ctx):
-    if ctx.author.id == int(owner):
-        for filename in os.listdir("commands"):
-            if filename.endswith(".py"):
-                await client.unload_extension(f"commands.{filename[:-3]}")
-        for filename in os.listdir("events"):
-            if filename.endswith(".py"):
-                await client.unload_extension(f"events.{filename[:-3]}")
-        for filename in os.listdir("commands"):
-            if filename.endswith(".py"):
-                await client.load_extension(f"commands.{filename[:-3]}")
-        for filename in os.listdir("events"):
-            if filename.endswith(".py"):
-                await client.load_extension(f"events.{filename[:-3]}")
-        await ctx.send("Reloaded all cogs")
-    else:
-        return
+        if ctx.author.id == int(owner):
+            for filename in os.listdir("commands") and os.listdir("events"):
+                if filename.endswith(".py"):
+                    try:
+                        await client.unload_extension(f"commands.{filename[:-3]}")
+                    except:
+                        await client.unload_extension(f"events.{filename[:-3]}")
+            for filename in os.listdir("commands") and os.listdir("events"):
+                if filename.endswith(".py"):
+                    try:
+                        await client.load_extension(f"commands.{filename[:-3]}")
+                    except:
+                        await client.load_extension(f"events.{filename[:-3]}")
+            await ctx.send("Reloaded all cogs")
+        else:
+            return
 
 client.run(token)
