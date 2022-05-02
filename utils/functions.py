@@ -2,7 +2,6 @@ import aiohttp
 import requests
 from bs4 import BeautifulSoup
 
-
 def download_avatar(url):
     r = requests.get(url)
     if r.status_code == 200:

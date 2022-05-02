@@ -2,8 +2,9 @@ import aiohttp
 import discord
 from discord.ext import commands
 from utils.functions import check_exists
-from utils.responses import (found_embed, not_found,
-                             searching, something_went_wrong)
+from utils.responses import (found_embed, not_found, searching,
+                             something_went_wrong)
+
 
 class minecraft_account(commands.Cog):
     def __init__(self, bot: commands.Bot):

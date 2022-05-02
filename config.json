@@ -1,9 +1,10 @@
 {
     "bot": {
-        "version": "1.0.0",
+        "version": "1.0.1",
         "creator": "Paper",
         "token": "your_bot_token",
         "owner": "your_discord_account_id",
+        "server_ip": "your minecraft server IP or hostname",
         "status": {
             "status": "online/dnd/idle",
             "streaming": {

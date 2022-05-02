@@ -1,4 +1,6 @@
 import base64
+import json
+import os
 
 import aiohttp
 import discord
@@ -9,6 +11,9 @@ from ping3 import ping
 latency_measurements = {"10": "is amazing", "50": "is average",
                         "100": "could be better", "150": "has an issue"}
 
+with open("config.json", "r") as file:
+    data = json.load(file)
+    server_ip = data["bot"]["server_ip"]
 
 class server_ping(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -34,21 +39,21 @@ class server_ping(commands.Cog):
                 # * If the current ping is greater than the ping "level" we return that keys message.
                 if current_latency >= int(latency):
                     message = latency_measurements[latency]
-            response = ping("65.108.27.94")
+            response = ping(f"{server_ip}")
             if response == False:
                 server_response = "🔴 Offline"
             else:
                 server_response = "🟢 Online"
             session = aiohttp.ClientSession()
-            main_server = await session.get("https://api.mcsrvstat.us/2/mc.akkadian.gg")
+            main_server = await session.get(f"https://api.mcsrvstat.us/2/{server_ip}")
             status = await main_server.json()
             await session.close()
-            serverURL = JavaServer.lookup("mc.akkadian.gg")
+            serverURL = JavaServer.lookup(f"{server_ip}")
             iconURL = serverURL.status().favicon
             if iconURL is not None:
                 IconBinary = iconURL.split("base64,")[1]
                 base64_img_bytes = IconBinary.encode('utf-8')
-                with open('decoded_image.png', 'wb') as file_to_save:
+                with open('assets/server_favicon.png', 'wb') as file_to_save:
                     decoded_image_data = base64.decodebytes(base64_img_bytes)
                     file_to_save.write(decoded_image_data)
                     status_ = True
@@ -61,14 +66,15 @@ class server_ping(commands.Cog):
                 main_server_response = "🔴 Offline"
             # * Finally send a beautiful little embed.
             embed = discord.Embed(
-                title="Current Ping", description=f"The bots current ping {message} [`{current_latency}`ms]\nThe server host is currently [`{server_response}`]\n**mc.akkadian.gg** is currently [`{main_server_response}`]", color=discord.Color.from_rgb(0, 255, 154))
+                title="Current Ping", description=f"The bots current ping {message} [`{current_latency}`ms]\nThe server host is currently [`{server_response}`]\n**{server_ip}** is currently [`{main_server_response}`]", color=discord.Color.from_rgb(0, 255, 154))
             embed.set_footer(
                 text="Server statuses are updated in 10 minute intervals, may not be accurate all of the time")
             if status_ == True:
-                file = discord.File("./decoded_image.png",
-                                    filename="decoded_image.png")
-                embed.set_thumbnail(url="attachment://decoded_image.png")
+                file = discord.File("assets/server_favicon.png",
+                                    filename="server_favicon.png")
+                embed.set_thumbnail(url="attachment://server_favicon.png")
                 await ctx.reply(file=file, embed=embed, mention_author=False)
+                os.remove("assets/server_favicon.png")
             else:
                 embed.set_thumbnail(
                     url="https://media.minecraftforum.net/attachments/300/619/636977108000120237.png")
