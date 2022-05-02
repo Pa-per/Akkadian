@@ -1,26 +1,9 @@
 import aiohttp
 import discord
 from discord.ext import commands
-
-no_username_given = discord.Embed(
-    title="404 | ❌", description="You need to specify a username to search for.", color=discord.Color.red())
-something_went_wrong = discord.Embed(
-    title="404 | ❌", description="Sorry, something has gone wrong with the API, please try again later.", color=discord.Color.red())
-found_embed = discord.Embed(title="Skin Search | ✅",
-                            color=discord.Color.from_rgb(0, 255, 154))
-not_found = discord.Embed(title="", description="Sorry that username does not exist according to Mojang!", color=discord.Color.red())
-searching = discord.Embed(title="", description="Searching please wait...", color=discord.Color.from_rgb(0, 255, 154))
-
-async def check_exists(name):
-    session = aiohttp.ClientSession()
-    async with session.get(f"https://api.mojang.com/users/profiles/minecraft/{name}") as response:
-        if response.status == 200:
-            data = await response.json()
-            await session.close()
-            return data
-        else:
-            await session.close()
-            return False
+from utils.functions import check_exists
+from utils.responses import (found_embed, not_found,
+                             searching, something_went_wrong)
 
 class minecraft_account(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -131,6 +114,7 @@ class minecraft_account(commands.Cog):
             found_embed.add_field(
                 name="UUID", value=f"`{UUID}`", inline=False)
             await msg.edit(embed=found_embed)
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(minecraft_account(bot))

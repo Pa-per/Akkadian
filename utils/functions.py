@@ -1,3 +1,4 @@
+import aiohttp
 import requests
 from bs4 import BeautifulSoup
 
@@ -27,3 +28,14 @@ def get_price(url):
         return price_text, product_name
     except Exception as e:
         print(e)
+
+async def check_exists(name):
+    session = aiohttp.ClientSession()
+    async with session.get(f"https://api.mojang.com/users/profiles/minecraft/{name}") as response:
+        if response.status == 200:
+            data = await response.json()
+            await session.close()
+            return data
+        else:
+            await session.close()
+            return False
