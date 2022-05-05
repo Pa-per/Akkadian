@@ -5,7 +5,6 @@ import platform
 import discord
 from colorama import Fore
 from discord.ext import commands
-from discord.ext.commands import ExtensionError
 
 intents = discord.Intents.all()
 

@@ -13,7 +13,7 @@ class owner(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.client = bot
 
-    @commands.command(name= "reloadall")
+    @commands.command(name="reloadall")
     async def reload(self, ctx: commands.Context):
         if ctx.author.id == int(owner_id):
             try:
