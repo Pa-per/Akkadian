@@ -21,5 +21,8 @@
                 "game": "the name of the game your bot is playing"
             }
         }
-    } 
+    },
+    "mongodb": {
+        "cluster": "mongodb://<username>:<password>@<host_ip>:<port>/<db_name>?authSource=<probably admin>"
+    }
 }
