@@ -15,25 +15,24 @@ class owner(commands.Cog):
 
     @commands.command(name="reloadall")
     async def reload(self, ctx: commands.Context):
-        if ctx.author.id == int(owner_id):
-            try:
-                for filename in os.listdir("commands") and os.listdir("events"):
-                    if filename.endswith(".py"):
-                        try:
-                            await self.client.unload_extension(f"commands.{filename[:-3]}")
-                        except ExtensionError:
-                            await self.client.unload_extension(f"events.{filename[:-3]}")
-                for filename in os.listdir("commands") and os.listdir("events"):
-                    if filename.endswith(".py"):
-                        try:
-                            await self.client.load_extension(f"commands.{filename[:-3]}")
-                        except ExtensionError:
-                            await self.client.load_extension(f"events.{filename[:-3]}")
-                await ctx.send("Reloaded all cogs")
-            except Exception as e:
-                print(e)
-        else:
+        if ctx.author.id != int(owner_id):
             return
+        try:
+            for filename in os.listdir("commands") and os.listdir("events"):
+                if filename.endswith(".py"):
+                    try:
+                        await self.client.unload_extension(f"commands.{filename[:-3]}")
+                    except ExtensionError:
+                        await self.client.unload_extension(f"events.{filename[:-3]}")
+            for filename in os.listdir("commands") and os.listdir("events"):
+                if filename.endswith(".py"):
+                    try:
+                        await self.client.load_extension(f"commands.{filename[:-3]}")
+                    except ExtensionError:
+                        await self.client.load_extension(f"events.{filename[:-3]}")
+            await ctx.send("Reloaded all cogs")
+        except Exception as e:
+            print(e)
 
 
 async def setup(bot: commands.Bot):
