@@ -6,7 +6,7 @@ from utils.responses import (found_embed, not_found, searching,
                              something_went_wrong)
 
 
-class minecraft_account(commands.Cog):
+class MinecraftAccount(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.client = bot
 
@@ -26,13 +26,12 @@ class minecraft_account(commands.Cog):
         data = await check_exists(name)
         if data is False:
             return await msg.edit(embed=not_found)
-        else:
-            UUID = data["id"]
-            Name = data["name"]
-            image = f"https://crafthead.net/armor/body/{UUID}"
-            found_embed.description = f"[`{Name}`]"
-            found_embed.set_image(url=image)
-            await msg.edit(embed=found_embed)
+        uuid = data["id"]
+        name_ = data["name"]
+        image = f"https://crafthead.net/armor/body/{uuid}"
+        found_embed.description = f"[`{name_}`]"
+        found_embed.set_image(url=image)
+        await msg.edit(embed=found_embed)
 
     @commands.command(name="names",
                       usage="<account name>",
@@ -118,4 +117,4 @@ class minecraft_account(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(minecraft_account(bot))
+    await bot.add_cog(MinecraftAccount(bot))
