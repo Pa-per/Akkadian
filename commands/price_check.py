@@ -24,12 +24,13 @@ class PriceCheck(commands.Cog):
             else:
                 await response.delete()
                 await message.edit(content="Checking...")
-                price_text, product_name = get_price(response.content)
+                price_text, product_name, product_image = get_price(response.content)
                 # use this later for price comparison
                 # price = price_text[1:]
                 embed = discord.Embed(title=f"Amazon Price Check", description=f"{product_name}", color=0x00ff00)
                 embed.add_field(name="Price", value=f"{price_text}", inline=False)
                 embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar.url)
+                embed.set_thumbnail(url=product_image)
                 await message.edit(content="", embed=embed)
         except Exception as e:
             print(e)

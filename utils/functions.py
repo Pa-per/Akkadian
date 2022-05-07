@@ -71,7 +71,9 @@ def get_price(url):
             'div', {'class': 'a-box-group'}).find('span', {'class': 'a-offscreen'}).text
         product_name = soup.find(
             'div', {'id': 'titleSection'}).find('span', {'id': 'productTitle'}).text
-        return price_text, product_name
+        product_image = soup.find(
+            'div', {'id': 'main-image-container'}).find('img', {'id': 'landingImage'}).get('src')
+        return price_text, product_name, product_image
     except Exception as e:
         print(e)
 
