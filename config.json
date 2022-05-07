@@ -4,6 +4,7 @@
         "creator": "Paper",
         "token": "your_bot_token",
         "owner": "your_discord_account_id",
+        "server_ip": "your minecraft server ip here",
         "status": {
             "status": "online/dnd/idle",
             "streaming": {
