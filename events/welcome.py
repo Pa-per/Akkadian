@@ -21,11 +21,14 @@ class DownloadAV(commands.Cog):
                 title=f"New Member! 👨‍🚀",
                 color=0xc6ea7e
             )
-            embed.set_image(url=f"attachment://welcome_with_avatar.png")
+            embed.set_image(url="attachment://welcome_with_avatar.png")
             embed.description = f"{member.mention} has joined the server!"
             embed.set_footer(text=f"{member.guild.name}", icon_url=member.guild.icon.url)
             make_welcome_image(self, member=member)
-            await channel.send(file=discord.File(f"assets/welcome_with_avatar.png"), embed=embed)
+            await channel.send(
+                file=discord.File("assets/welcome_with_avatar.png"), embed=embed
+            )
+
             os.remove('assets/avatar.png')
             os.remove('assets/welcome_with_avatar.png')
         else:
@@ -44,7 +47,14 @@ def make_welcome_image(self, member):
     board.text((205, 250), "WELCOME", color="#c6ea7e", font=poppins, align="center")
     board.text((205, 300), f"{member.name}#{member.discriminator}", color="#c6ea7e", font=poppins_mediam, align="center")
     members = len(self.bot.get_guild(member.guild.id).members)
-    board.text((190, 350), f"YOU ARE MEMBER ", font=poppins_regular, color="white", align="center")
+    board.text(
+        (190, 350),
+        "YOU ARE MEMBER ",
+        font=poppins_regular,
+        color="white",
+        align="center",
+    )
+
     board.text((355, 350), f"#{members}", font=poppins_mediam, color="#c6ea7e", align="center")
     board.save("assets/welcome_with_avatar.png")
 

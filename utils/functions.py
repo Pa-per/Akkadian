@@ -4,12 +4,11 @@ from bs4 import BeautifulSoup
 
 def download_avatar(url):
     r = requests.get(url)
-    if r.status_code == 200:
-        with open('assets/avatar.png', 'wb') as f:
-            f.write(r.content)
-            return True
-    else:
+    if r.status_code != 200:
         return False
+    with open('assets/avatar.png', 'wb') as f:
+        f.write(r.content)
+        return True
 
 
 def get_price(url):

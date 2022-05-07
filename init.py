@@ -33,23 +33,20 @@ async def on_ready():
     for filename in os.listdir("events"):
         if filename.endswith(".py"):
             await client.load_extension(f"events.{filename[:-3]}")
-    print(Fore.GREEN + "MODERATION Initialised" + Fore.RESET)
-    print(Fore.GREEN + "MINECRAFT Initialised" + Fore.RESET)
-    print(Fore.GREEN + "ERRORS Initialised" + Fore.RESET)
-    print(Fore.MAGENTA + f"""
-─█▀▀█ █─█ █─█ █▀▀█ █▀▀▄ ─▀─ █▀▀█ █▀▀▄ 
-░█▄▄█ █▀▄ █▀▄ █▄▄█ █──█ ▀█▀ █▄▄█ █──█ 
-░█─░█ ▀─▀ ▀─▀ ▀──▀ ▀▀▀─ ▀▀▀ ▀──▀ ▀──▀
+    print(f"{Fore.GREEN}MODERATION Initialised{Fore.RESET}")
+    print(f"{Fore.GREEN}MINECRAFT Initialised{Fore.RESET}")
+    print(f"{Fore.GREEN}ERRORS Initialised{Fore.RESET}")
+    print(
+        f"""{Fore.MAGENTA}\x1f─█▀▀█ █─█ █─█ █▀▀█ █▀▀▄ ─▀─ █▀▀█ █▀▀▄ \x1f░█▄▄█ █▀▄ █▀▄ █▄▄█ █──█ ▀█▀ █▄▄█ █──█ \x1f░█─░█ ▀─▀ ▀─▀ ▀──▀ ▀▀▀─ ▀▀▀ ▀──▀ ▀──▀\x1f\x1f\x1f       █▀█\u2003█▄░█\u2003█░░\u2003█\u2003█▄░█\u2003█▀▀\x1f       █▄█\u2003█░▀█\u2003█▄▄\u2003█\u2003█░▀█\u2003██▄\x1f\x1f―――――――――――――――――――――――――――――――――――――"""
+    )
 
-
-       █▀█ █▄░█ █░░ █ █▄░█ █▀▀
-       █▄█ █░▀█ █▄▄ █ █░▀█ ██▄
-
-―――――――――――――――――――――――――――――――――――――""")
     print(Fore.CYAN +
           f" 「 {bot_version} 」|「 Created by: {creators} 」" + Fore.RESET)
     # print only the version number that i am using
-    print(Fore.LIGHTYELLOW_EX + f" 「 d.py: {discord.__version__}  」|「 py: {platform.python_version()} 」" + Fore.RESET)
+    print(
+        f"{Fore.LIGHTYELLOW_EX} 「 d.py: {discord.__version__}  」|「 py: {platform.python_version()} 」{Fore.RESET}"
+    )
+
     status = data["bot"]["status"]["status"]
     if streaming == "True":
         platform_ = data["bot"]["status"]["streaming"]["type"]
@@ -76,21 +73,20 @@ async def on_ready():
 
 @client.command()
 async def reload(ctx):
-    if ctx.author.id == int(owner):
-        for filename in os.listdir("commands") and os.listdir("events"):
-            if filename.endswith(".py"):
-                try:
-                    await client.unload_extension(f"commands.{filename[:-3]}")
-                except ExtensionError:
-                    await client.unload_extension(f"events.{filename[:-3]}")
-        for filename in os.listdir("commands") and os.listdir("events"):
-            if filename.endswith(".py"):
-                try:
-                    await client.load_extension(f"commands.{filename[:-3]}")
-                except ExtensionError:
-                    await client.load_extension(f"events.{filename[:-3]}")
-        await ctx.send("Reloaded all cogs")
-    else:
+    if ctx.author.id != int(owner):
         return
+    for filename in os.listdir("commands") and os.listdir("events"):
+        if filename.endswith(".py"):
+            try:
+                await client.unload_extension(f"commands.{filename[:-3]}")
+            except ExtensionError:
+                await client.unload_extension(f"events.{filename[:-3]}")
+    for filename in os.listdir("commands") and os.listdir("events"):
+        if filename.endswith(".py"):
+            try:
+                await client.load_extension(f"commands.{filename[:-3]}")
+            except ExtensionError:
+                await client.load_extension(f"events.{filename[:-3]}")
+    await ctx.send("Reloaded all cogs")
 
 client.run(token)

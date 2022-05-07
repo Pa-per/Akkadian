@@ -27,7 +27,12 @@ class PriceCheck(commands.Cog):
                 price_text, product_name = get_price(response.content)
                 # use this later for price comparison
                 # price = price_text[1:]
-                embed = discord.Embed(title=f"Amazon Price Check", description=f"{product_name}", color=0x00ff00)
+                embed = discord.Embed(
+                    title="Amazon Price Check",
+                    description=f"{product_name}",
+                    color=0x00FF00,
+                )
+
                 embed.add_field(name="Price", value=f"{price_text}", inline=False)
                 embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar.url)
                 await message.edit(content="", embed=embed)

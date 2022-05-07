@@ -35,10 +35,7 @@ class server_ping(commands.Cog):
                 if current_latency >= int(latency):
                     message = latency_measurements[latency]
             response = ping("65.108.27.94")
-            if response == False:
-                server_response = "🔴 Offline"
-            else:
-                server_response = "🟢 Online"
+            server_response = "🔴 Offline" if response == False else "🟢 Online"
             session = aiohttp.ClientSession()
             main_server = await session.get("https://api.mcsrvstat.us/2/mc.akkadian.gg")
             status = await main_server.json()
@@ -55,16 +52,13 @@ class server_ping(commands.Cog):
             else:
                 status_ = False
             online = status["online"]
-            if online == True:
-                main_server_response = "🟢 Online"
-            else:
-                main_server_response = "🔴 Offline"
+            main_server_response = "🟢 Online" if online == True else "🔴 Offline"
             # * Finally send a beautiful little embed.
             embed = discord.Embed(
                 title="Current Ping", description=f"The bots current ping {message} [`{current_latency}`ms]\nThe server host is currently [`{server_response}`]\n**mc.akkadian.gg** is currently [`{main_server_response}`]", color=discord.Color.from_rgb(0, 255, 154))
             embed.set_footer(
                 text="Server statuses are updated in 10 minute intervals, may not be accurate all of the time")
-            if status_ == True:
+            if status_:
                 file = discord.File("./decoded_image.png",
                                     filename="decoded_image.png")
                 embed.set_thumbnail(url="attachment://decoded_image.png")
