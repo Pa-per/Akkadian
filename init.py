@@ -81,45 +81,42 @@ async def on_guild_remove(guild: discord.Guild):
 async def on_message(message):
 
     if not message.guild:
-
         return
 
-    else:
+    if message.content.startswith(
+        f"<@!{client.user.id}>"
+    ) or message.content.startswith(f"<@{client.user.id}>"):
 
-        if message.content.startswith(
-            f"<@!{client.user.id}>"
-        ) or message.content.startswith(f"<@{client.user.id}>"):
+        query = {"_id": message.guild.id}
+
+        if serverConfigs.count_documents(query) == 0:
+
+            default_prefix = "-"
+
+            new_prefix = {"_id": message.guild.id,
+                          "prefix": default_prefix}
+
+            serverConfigs.insert_one(new_prefix)
+
+            await message.reply(
+                f"**Hello!**\nMy prefix for this server is: `{default_prefix}`"
+            )
+
+        else:
 
             query = {"_id": message.guild.id}
 
-            if serverConfigs.count_documents(query) == 0:
+            guild = serverConfigs.find(query)
 
-                default_prefix = "-"
+            for result in guild:
 
-                new_prefix = {"_id": message.guild.id,
-                              "prefix": default_prefix}
-
-                serverConfigs.insert_one(new_prefix)
+                prefix = result["prefix"]
 
                 await message.reply(
-                    f"**Hello!**\nMy prefix for this server is: `{default_prefix}`"
+                    f"**Hello!**\nMy prefix for this server is: `{prefix}`"
                 )
 
-            else:
-
-                query = {"_id": message.guild.id}
-
-                guild = serverConfigs.find(query)
-
-                for result in guild:
-
-                    prefix = result["prefix"]
-
-                    await message.reply(
-                        f"**Hello!**\nMy prefix for this server is: `{prefix}`"
-                    )
-
-        await client.process_commands(message)
+    await client.process_commands(message)
 
 
 client.run(token)
